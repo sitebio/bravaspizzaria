@@ -1,271 +1,428 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#141414" />
-  <meta name="description" content="Central de suporte e jogo da pizzaria." />
-  <title>Pizzaria • Central do Jogo</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d12">
+<meta name="description" content="Central do Jogo da Pizzaria — instruções, dado e desafios em uma experiência jovem e responsiva.">
+<title>Central do Jogo • Pizzaria</title>
+<style>
+:root{
+  --bg:#08090d;
+  --bg-2:#0d1017;
+  --panel:#11151e;
+  --panel-2:#151a24;
+  --text:#f6f7fb;
+  --muted:#9ea7b7;
+  --line:rgba(255,255,255,.09);
+  --line-strong:rgba(255,255,255,.15);
+  --primary:#ff7a18;
+  --primary-2:#ffb347;
+  --accent:#7c5cff;
+  --success:#38d39f;
+  --danger:#ff5578;
+  --shadow:0 24px 80px rgba(0,0,0,.34);
+  --radius:24px;
+  --radius-sm:16px;
+  --max:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 15% 5%,rgba(255,122,24,.15),transparent 26%),
+    radial-gradient(circle at 88% 13%,rgba(124,92,255,.13),transparent 28%),
+    linear-gradient(180deg,#07080b 0%,#0a0c10 42%,#08090d 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body.modal-open{overflow:hidden}
+button,input,textarea,select{font:inherit}
+button,a{ -webkit-tap-highlight-color:transparent }
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.hidden{display:none!important}
+.container{width:min(var(--max),calc(100% - 32px));margin:0 auto}
+
+/* ambient */
+body::before,body::after{content:"";position:fixed;inset:auto;pointer-events:none;z-index:-1;filter:blur(10px)}
+body::before{width:280px;height:280px;left:-120px;top:360px;border-radius:50%;background:rgba(255,122,24,.07)}
+body::after{width:360px;height:360px;right:-180px;bottom:80px;border-radius:50%;background:rgba(124,92,255,.07)}
+
+/* topbar */
+.topbar{
+  position:sticky;top:0;z-index:40;
+  backdrop-filter:blur(18px);
+  background:rgba(7,8,11,.72);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{
+  width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:22px;
+  background:linear-gradient(145deg,var(--primary),var(--primary-2));
+  color:#1a1007;box-shadow:0 10px 30px rgba(255,122,24,.28)
+}
+.brand-copy{display:flex;flex-direction:column;line-height:1}
+.brand-kicker{font-size:9px;letter-spacing:.18em;color:#8e97a8;font-weight:800}
+.brand-name{font-size:16px;font-weight:900;letter-spacing:.04em;margin-top:4px}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-links a{padding:9px 12px;color:#adb5c2;border-radius:12px;font-size:13px;font-weight:700}
+.nav-links a:hover{background:rgba(255,255,255,.05);color:var(--text)}
+.nav-cta{display:flex;gap:8px;align-items:center}
+
+/* buttons */
+.btn{
+  border:0;cursor:pointer;border-radius:14px;padding:12px 16px;font-weight:850;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease,opacity .18s ease;
+  min-height:46px
+}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn-primary{color:#170b03;background:linear-gradient(135deg,var(--primary),var(--primary-2));box-shadow:0 16px 32px rgba(255,122,24,.2)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 22px 38px rgba(255,122,24,.26)}
+.btn-secondary{color:var(--text);background:rgba(255,255,255,.035);border:1px solid var(--line-strong)}
+.btn-secondary:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.22);transform:translateY(-1px)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:#cdd3de}
+.btn-ghost:hover{background:rgba(255,255,255,.04)}
+.btn.small{min-height:40px;padding:9px 12px;border-radius:12px;font-size:12px}
+.btn.full{width:100%}
+
+/* hero */
+.hero{padding:74px 0 44px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:40px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;font-weight:900;letter-spacing:.12em;color:#cfd5df;border:1px solid var(--line);padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.025)}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 6px rgba(56,211,159,.1)}
+.hero h1{font-size:clamp(42px,7vw,78px);line-height:.94;letter-spacing:-.045em;margin:20px 0 18px;max-width:760px}
+.hero h1 span{background:linear-gradient(135deg,#fff 0%,var(--primary-2) 72%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:17px;line-height:1.65;color:#aeb6c4;max-width:640px;margin:0}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:9px 16px;margin-top:19px;color:#838c9c;font-size:12px;font-weight:700}
+.hero-visual{position:relative;min-height:480px}
+.hero-card{
+  position:absolute;inset:30px 10px 20px 50px;border:1px solid var(--line);border-radius:32px;padding:26px;overflow:hidden;
+  background:
+    radial-gradient(circle at 80% 20%,rgba(255,179,71,.13),transparent 27%),
+    radial-gradient(circle at 10% 80%,rgba(124,92,255,.16),transparent 30%),
+    linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.015));
+  box-shadow:var(--shadow)
+}
+.hero-card::after{content:"";position:absolute;width:240px;height:240px;border:1px solid rgba(255,255,255,.06);border-radius:50%;right:-70px;bottom:-90px}
+.mini-label{font-size:10px;color:#878f9c;font-weight:900;letter-spacing:.16em}
+.hero-card-icon{font-size:54px;margin-top:78px;filter:drop-shadow(0 12px 18px rgba(0,0,0,.24))}
+.hero-card h3{font-size:31px;line-height:1.06;letter-spacing:-.03em;margin:13px 0 8px;max-width:430px}
+.hero-card p{font-size:14px;line-height:1.6;color:#9ba5b4;max-width:430px}
+.dots{display:flex;gap:7px;margin-top:26px}.dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2)}.dots i:first-child{background:var(--primary);box-shadow:0 0 16px rgba(255,122,24,.6)}
+.floating-pill{position:absolute;display:flex;align-items:center;gap:8px;padding:11px 13px;border-radius:14px;border:1px solid var(--line);background:rgba(17,21,30,.88);box-shadow:var(--shadow);font-weight:800;font-size:12px}
+.float-a{left:0;bottom:42px}.float-b{right:0;top:42px}
+
+/* sections */
+.section{padding:56px 0}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:22px}
+.kicker{font-size:10px;letter-spacing:.17em;font-weight:900;color:#818a9a}
+.section h2{font-size:clamp(29px,4vw,46px);line-height:1.02;letter-spacing:-.035em;margin:7px 0 0}
+.section-head p{margin:0;max-width:480px;color:#98a2b1;line-height:1.6;font-size:14px}
+.center{text-align:center}.center .section-head{justify-content:center}.center .section-head p{max-width:560px}
+
+/* tutorial */
+.tutorial-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.step-card{padding:20px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.025);position:relative;overflow:hidden;min-height:176px}
+.step-card::before{content:"";position:absolute;inset:auto -30px -70px auto;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(255,122,24,.12),transparent 65%)}
+.step-no{font-size:11px;font-weight:900;color:var(--primary)}
+.step-icon{font-size:34px;margin:17px 0 12px}.step-card h3{font-size:18px;margin:0 0 8px;letter-spacing:-.01em}.step-card p{color:#919aa9;font-size:13px;line-height:1.55;margin:0}
+
+/* dice */
+.dice-zone{position:relative;border:1px solid var(--line);border-radius:30px;padding:30px;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.018));box-shadow:var(--shadow)}
+.dice-zone::before{content:"";position:absolute;width:500px;height:300px;left:50%;top:50%;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(255,122,24,.12),transparent 70%);filter:blur(18px);pointer-events:none}
+.dice-layout{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:center;position:relative;z-index:1}
+.dice-copy h3{font-size:30px;line-height:1.06;letter-spacing:-.03em;margin:0 0 10px}.dice-copy p{color:#9da6b5;line-height:1.65;max-width:500px}
+.stat-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.stat{padding:9px 11px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);color:#9ca5b3;font-size:11px;font-weight:800}.stat strong{color:var(--text);font-size:14px;margin-right:4px}
+.dice-stage{min-height:370px;display:grid;place-items:center;position:relative;padding:20px}
+.dice-button{width:210px;height:210px;border:0;background:transparent;cursor:pointer;perspective:900px;display:grid;place-items:center;touch-action:manipulation}
+.die-wrap{width:128px;height:128px;perspective:900px;display:grid;place-items:center}
+.die{width:120px;height:120px;position:relative;transform-style:preserve-3d;transition:transform 1.15s cubic-bezier(.22,.9,.22,1);filter:drop-shadow(0 28px 28px rgba(0,0,0,.34))}
+.face{position:absolute;inset:0;border-radius:24px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#fbfbfe,#cfd5df);border:1px solid rgba(0,0,0,.12);box-shadow:inset 0 0 22px rgba(255,255,255,.35),0 8px 16px rgba(0,0,0,.08);color:#0c0e13;font-size:24px;font-weight:950}
+.face::after{content:"";width:15px;height:15px;border-radius:50%;background:#1a1d23;box-shadow:0 0 0 3px rgba(0,0,0,.04)}
+.front{transform:translateZ(60px)}.back{transform:rotateY(180deg) translateZ(60px)}.right{transform:rotateY(90deg) translateZ(60px)}.left{transform:rotateY(-90deg) translateZ(60px)}.top{transform:rotateX(90deg) translateZ(60px)}.bottom{transform:rotateX(-90deg) translateZ(60px)}
+.die::before{content:"";position:absolute;inset:0;transform:translateZ(61px);border-radius:24px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.dice-button:hover .die{transform:translateY(-5px) rotateX(-8deg) rotateY(16deg)}
+.dice-button.rolling .die{animation:diceSpin 1.1s cubic-bezier(.2,.9,.25,1)}
+@keyframes diceSpin{0%{transform:translateY(0) rotateX(0) rotateY(0) rotateZ(0)}35%{transform:translateY(-24px) rotateX(260deg) rotateY(390deg) rotateZ(80deg)}72%{transform:translateY(-8px) rotateX(510deg) rotateY(690deg) rotateZ(160deg)}100%{transform:translateY(0) rotateX(720deg) rotateY(1080deg) rotateZ(180deg)}}
+.dice-glow{position:absolute;width:210px;height:70px;bottom:44px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,122,24,.35),transparent 75%);filter:blur(12px)}
+.result-card{width:min(100%,390px);padding:22px 22px 20px;border-radius:22px;border:1px solid var(--line);background:rgba(9,11,15,.76);backdrop-filter:blur(16px);text-align:center}
+.result-kicker{font-size:10px;color:#7f8997;letter-spacing:.16em;font-weight:900}.result-value{font-size:56px;font-weight:950;letter-spacing:-.05em;margin:4px 0}.result-label{font-size:19px;font-weight:900}.result-desc{font-size:13px;line-height:1.55;color:#9099a8;margin:7px auto 0;max-width:320px}.result-actions{display:flex;gap:8px;margin-top:16px}.result-actions .btn{flex:1}
+.dice-stage-inner{display:grid;grid-template-columns:.92fr 1.08fr;gap:22px;align-items:center;width:100%;max-width:780px}
+
+/* challenges */
+.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}.filters{display:flex;flex-wrap:wrap;gap:7px}.filter{border:1px solid var(--line);background:rgba(255,255,255,.025);color:#9fa8b6;padding:8px 11px;border-radius:999px;font-size:11px;font-weight:850;cursor:pointer}.filter.active{color:#160d04;border-color:transparent;background:linear-gradient(135deg,var(--primary),var(--primary-2))}.count{font-size:12px;color:#818a99;font-weight:800;white-space:nowrap}
+.challenge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.challenge-card{padding:20px;border-radius:20px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.018));transition:transform .2s ease,border-color .2s ease,background .2s ease;display:flex;flex-direction:column;min-height:230px;position:relative;overflow:hidden}
+.challenge-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.17);background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.02))}
+.challenge-top{display:flex;justify-content:space-between;gap:8px}.challenge-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.05);font-size:23px}.badge{padding:7px 9px;border-radius:999px;font-size:10px;font-weight:900;border:1px solid var(--line);color:#a9b1be;height:max-content}.challenge-card h3{font-size:19px;line-height:1.15;margin:17px 0 8px;letter-spacing:-.015em}.challenge-card p{margin:0;color:#929aaa;font-size:13px;line-height:1.58}.challenge-bottom{margin-top:auto;padding-top:17px;display:flex;justify-content:space-between;align-items:center;gap:10px}.points{font-size:11px;color:#a4acb9;font-weight:800}.points strong{font-size:15px;color:var(--text)}
+.challenge-card.completed{border-color:rgba(56,211,159,.28);box-shadow:0 0 0 1px rgba(56,211,159,.06)}
+.completed-badge{color:var(--success);border-color:rgba(56,211,159,.18);background:rgba(56,211,159,.08)}
+
+/* game */
+.game-panel{border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:24px;overflow:hidden}.game-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}.game-status{display:flex;align-items:center;gap:8px;font-size:11px;color:#8992a2;font-weight:800}.status-dot{width:8px;height:8px;border-radius:50%;background:#777}.status-dot.on{background:var(--success);box-shadow:0 0 0 5px rgba(56,211,159,.08)}
+.game-body{min-height:320px;display:grid;place-items:center;padding:34px}.game-empty{text-align:center;max-width:560px}.game-empty-icon{font-size:52px}.game-empty h3{font-size:26px;margin:13px 0 9px}.game-empty p{color:#909aa8;line-height:1.6;margin:0 auto 18px}
+iframe{width:100%;height:680px;border:0;background:#fff}
+
+/* developer */
+.dev-area{padding-bottom:84px}.dev-card{border:1px solid var(--line);border-radius:24px;padding:22px;background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(255,255,255,.018));display:flex;align-items:center;justify-content:space-between;gap:20px}.dev-copy .kicker{color:var(--accent)}.dev-copy h2{font-size:25px;margin:7px 0}.dev-copy p{margin:0;color:#8f98a7;line-height:1.55;font-size:13px;max-width:700px}
+footer{border-top:1px solid var(--line);padding:25px 0 38px;color:#737c8c;font-size:12px}footer .inner{display:flex;align-items:center;justify-content:space-between;gap:16px}footer a{color:#a4adbc;font-weight:800}
+
+/* modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);z-index:100;display:grid;place-items:center;padding:18px}.modal{width:min(100%,920px);max-height:min(92vh,900px);overflow:auto;border:1px solid var(--line-strong);border-radius:24px;background:linear-gradient(180deg,#11151d,#0c0f14);box-shadow:0 40px 100px rgba(0,0,0,.5);position:relative}.modal-close{position:absolute;top:13px;right:13px;width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#d4d9e2;font-size:23px;cursor:pointer}.startup-modal{max-width:500px;padding:32px}.startup-modal .sparkle{font-size:42px}.modal-kicker{font-size:10px;letter-spacing:.16em;font-weight:900;color:#8c95a5}.modal h3{font-size:30px;letter-spacing:-.03em;margin:8px 0 9px}.modal p{color:#919aa8;line-height:1.6;margin:0}.stack{display:grid;gap:12px;margin-top:22px}.field{display:grid;gap:7px}.field span{font-size:11px;color:#aeb5c1;font-weight:800}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);background:#0a0d12;color:var(--text);border-radius:13px;padding:12px 13px;outline:0}.field textarea{min-height:90px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(255,122,24,.55);box-shadow:0 0 0 4px rgba(255,122,24,.08)}.error{font-size:12px;color:#ff8aa1;background:rgba(255,85,120,.07);border:1px solid rgba(255,85,120,.18);padding:10px 11px;border-radius:12px}
+.admin{padding:25px}.admin-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding-right:40px}.admin-tabs{display:flex;gap:6px;overflow:auto;padding:16px 0 10px;position:sticky;top:0;background:#11151d;z-index:2;border-bottom:1px solid var(--line)}.tab{border:1px solid var(--line);background:rgba(255,255,255,.025);color:#99a2b1;padding:9px 12px;border-radius:11px;font-size:11px;font-weight:850;cursor:pointer;white-space:nowrap}.tab.active{color:#1a1007;background:linear-gradient(135deg,var(--primary),var(--primary-2));border-color:transparent}.panel{display:none;padding-top:18px}.panel.active{display:block}.editor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.editor-grid .span-2{grid-column:span 2}.section-box{border:1px solid var(--line);border-radius:17px;padding:15px;background:rgba(255,255,255,.018);margin-top:12px}.editor-row{display:grid;grid-template-columns:54px 1.2fr 1.5fr 170px 44px;gap:9px;align-items:end}.editor-row + .editor-row{margin-top:9px}.emoji-input{text-align:center;font-size:22px}.danger{color:#ff91a6;background:rgba(255,85,120,.06);border:1px solid rgba(255,85,120,.16);width:44px;height:44px;border-radius:11px;cursor:pointer}.admin-actions{display:flex;justify-content:flex-end;gap:8px;align-items:center;border-top:1px solid var(--line);padding-top:17px;margin-top:20px}.save-state{margin-right:auto;color:#768091;font-size:11px}.upload-row,.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:18px;border:1px solid var(--line);border-radius:17px;padding:15px;background:rgba(255,255,255,.018);margin-top:12px}.upload-row p,.toggle-row p{margin:4px 0 0;color:#808999;font-size:11px;line-height:1.5}.switch{position:relative;width:48px;height:28px;flex:0 0 auto}.switch input{position:absolute;opacity:0}.switch span{position:absolute;inset:0;border:1px solid var(--line-strong);background:#171b23;border-radius:999px;cursor:pointer}.switch span::after{content:"";position:absolute;width:20px;height:20px;top:3px;left:3px;border-radius:50%;background:#858d9b;transition:.18s}.switch input:checked + span{background:rgba(56,211,159,.2);border-color:rgba(56,211,159,.35)}.switch input:checked + span::after{transform:translateX(20px);background:var(--success)}.tip{margin-top:12px;padding:12px;border:1px dashed rgba(255,255,255,.12);border-radius:14px;color:#858e9d;font-size:11px;line-height:1.55}.logo-preview{width:58px;height:58px;border-radius:14px;object-fit:cover;border:1px solid var(--line);background:#0a0d12}.mini-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* onboarding / motion */
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;pointer-events:none;z-index:120;padding:11px 14px;border-radius:13px;border:1px solid var(--line-strong);background:#131821;box-shadow:var(--shadow);font-size:12px;font-weight:800;color:#dfe4eb;transition:.22s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.reveal{animation:reveal .6s both}.delay-1{animation-delay:.08s}.delay-2{animation-delay:.16s}.delay-3{animation-delay:.24s}@keyframes reveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+@media (max-width: 980px){
+  .nav-links{display:none}.hero-grid,.dice-layout{grid-template-columns:1fr}.hero-visual{min-height:390px}.hero-card{inset:12px 18px 16px 18px}.float-a{left:10px}.float-b{right:10px}.tutorial-grid{grid-template-columns:repeat(2,1fr)}.challenge-grid{grid-template-columns:repeat(2,1fr)}.dice-stage-inner{grid-template-columns:1fr}.dice-stage{min-height:auto}.dice-copy{order:2}.dice-stage{order:1}.dice-layout{gap:10px}.dice-copy{padding:6px 2px 4px}.editor-row{grid-template-columns:54px 1fr 1fr 140px 44px}
+}
+@media (max-width: 700px){
+  .container{width:min(var(--max),calc(100% - 22px))}.nav{height:64px}.nav-cta .btn-secondary{display:none}.hero{padding:52px 0 30px}.hero h1{font-size:44px}.hero p{font-size:15px}.hero-actions{display:grid;grid-template-columns:1fr}.hero-actions .btn{width:100%}.hero-visual{min-height:320px}.hero-card{padding:20px;border-radius:24px}.hero-card-icon{margin-top:34px}.hero-card h3{font-size:25px}.floating-pill{font-size:10px;padding:9px 10px}.section{padding:42px 0}.section-head{display:block}.section-head p{margin-top:9px}.tutorial-grid,.challenge-grid{grid-template-columns:1fr}.step-card{min-height:0}.dice-zone{padding:16px;border-radius:22px}.dice-stage-inner{gap:8px}.dice-button{width:180px;height:180px}.die-wrap{transform:scale(.86)}.result-card{padding:18px}.result-actions{display:grid;grid-template-columns:1fr}.toolbar{display:block}.count{display:block;margin-top:9px}.dev-card{display:block;padding:20px}.dev-card .btn{margin-top:14px;width:100%}footer .inner{display:grid;gap:7px}.modal{max-height:94vh}.admin{padding:19px}.editor-grid{grid-template-columns:1fr}.editor-grid .span-2{grid-column:span 1}.editor-row{grid-template-columns:46px 1fr 1fr;align-items:stretch}.editor-row .field-difficulty{grid-column:span 2}.editor-row .danger{grid-column:3}.upload-row,.toggle-row{align-items:flex-start}.admin-actions{display:grid;grid-template-columns:1fr 1fr}.admin-actions .save-state{grid-column:1/-1;margin:0}.admin-actions .btn{width:100%}
+}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.reveal{animation:none}.btn,.challenge-card,.toast{transition:none}.dice-button.rolling .die{animation:none}}
+</style>
 </head>
 <body>
-  <div class="ambient ambient-a"></div>
-  <div class="ambient ambient-b"></div>
-  <header class="topbar">
-    <a class="brand" href="#inicio" aria-label="Início">
+<header class="topbar">
+  <div class="container nav">
+    <a class="brand" href="#inicio">
       <div class="brand-mark" id="brandMark">🍕</div>
-      <div>
-        <span class="brand-kicker">CENTRAL DO</span>
-        <strong id="brandName">JOGO</strong>
-      </div>
+      <div class="brand-copy"><span class="brand-kicker">CENTRAL DO</span><span class="brand-name" id="brandName">JOGO</span></div>
     </a>
-    <nav class="topnav" aria-label="Navegação principal">
-      <a href="#como-jogar">Como jogar</a>
-      <a href="#dado">Dado</a>
-      <a href="#desafios">Desafios</a>
+    <nav class="nav-links" aria-label="Navegação">
+      <a href="#como-jogar">Como jogar</a><a href="#dado">Dado</a><a href="#desafios">Desafios</a><a href="#jogo">Jogo</a>
     </nav>
-    <a class="ghost-link" href="#desenvolvedor">Desenvolvedor</a>
-  </header>
+    <div class="nav-cta"><button class="btn btn-ghost small" id="soundToggle" type="button">🔊 Som</button><a class="btn btn-secondary small" href="#desenvolvedor">Desenvolvedor</a></div>
+  </div>
+</header>
 
-  <main>
-    <section class="hero section" id="inicio">
-      <div class="hero-copy">
-        <div class="eyebrow"><span class="pulse"></span><span id="heroEyebrow">PRONTO PARA JOGAR?</span></div>
-        <h1 id="heroTitle">Jogue.<br/><span>Role o dado.</span><br/>Encare o desafio.</h1>
-        <p id="heroText">Uma central rápida para entender a partida, rolar o dado e descobrir o próximo desafio.</p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#dado">🎲 Rolar o dado</a>
-          <a class="btn btn-secondary" href="#como-jogar">Ver instruções</a>
-        </div>
-        <div class="hero-meta">
-          <span>⚡ Sem cadastro</span>
-          <span>📱 Feito para celular</span>
-          <span>🧩 Desafios configuráveis</span>
-        </div>
+<main>
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy reveal">
+      <div class="eyebrow"><span class="pulse"></span><span id="heroEyebrow">PRONTO PARA JOGAR?</span></div>
+      <h1 id="heroTitle">Jogue.<br><span>Role o dado.</span><br>Encare o desafio.</h1>
+      <p id="heroText">Uma central rápida para entender a partida, rolar o dado e descobrir o próximo desafio.</p>
+      <div class="hero-actions"><a class="btn btn-primary" href="#dado">🎲 Rolar o dado</a><a class="btn btn-secondary" href="#como-jogar">📖 Ver instruções</a></div>
+      <div class="hero-meta"><span>⚡ Sem cadastro</span><span>📱 Feito para celular</span><span>🧩 Desafios configuráveis</span></div>
+    </div>
+    <div class="hero-visual reveal delay-2">
+      <div class="hero-card">
+        <div class="mini-label">PRÓXIMO DESAFIO</div><div class="hero-card-icon" id="heroChallengeIcon">🔥</div><h3 id="heroChallengeTitle">A sorte decidiu.</h3><p id="heroChallengeSub">Role o dado para descobrir seu desafio.</p><div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
-      <div class="hero-card glass" aria-hidden="true">
-        <div class="mini-label">PRÓXIMO DESAFIO</div>
-        <div class="hero-card-icon" id="heroChallengeIcon">🔥</div>
-        <div class="hero-card-title" id="heroChallengeTitle">A sorte decidiu.</div>
-        <div class="hero-card-sub" id="heroChallengeSub">Role o dado para descobrir seu desafio.</div>
-        <div class="mini-dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      </div>
-    </section>
+      <div class="floating-pill float-a">🎯 <span><b id="heroStreak">0</b> sequência</span></div>
+      <div class="floating-pill float-b">🏆 <span><b id="heroScore">0</b> pts</span></div>
+    </div>
+  </div>
+</section>
 
-    <section class="section" id="como-jogar">
-      <div class="section-heading">
-        <div>
-          <span class="section-kicker">COMECE AQUI</span>
-          <h2 id="tutorialTitle">Como jogar</h2>
-        </div>
-        <p id="tutorialIntro">Leia o passo a passo e depois vá direto para o dado.</p>
-      </div>
-      <div class="tutorial-grid" id="tutorialGrid"></div>
-    </section>
+<section class="section" id="como-jogar">
+  <div class="container">
+    <div class="section-head"><div><div class="kicker">COMECE AQUI</div><h2 id="tutorialTitle">Como jogar</h2></div><p id="tutorialIntro">Leia o passo a passo, depois vá para o dado e comece a missão.</p></div>
+    <div class="tutorial-grid" id="tutorialGrid"></div>
+  </div>
+</section>
 
-    <section class="section dice-section" id="dado">
-      <div class="section-heading centered">
-        <div>
-          <span class="section-kicker">MOMENTO DA SORTE</span>
-          <h2 id="diceTitle">Role o dado</h2>
+<section class="section" id="dado">
+  <div class="container">
+    <div class="section-head"><div><div class="kicker">MOMENTO DA SORTE</div><h2 id="diceTitle">Role o dado</h2></div><p id="diceIntro">Toque no dado. Cada resultado libera um desafio e adiciona pontos quando você completar a missão.</p></div>
+    <div class="dice-zone">
+      <div class="dice-layout">
+        <div class="dice-copy">
+          <h3>Uma rodada por vez.<br>Sem complicação.</h3>
+          <p>Role, descubra a missão, cumpra o desafio e marque como concluído. O jogo acompanha sua pontuação e sua sequência nesta sessão.</p>
+          <div class="stat-row"><div class="stat"><strong id="statRolls">0</strong>roladas</div><div class="stat"><strong id="statCompleted">0</strong>concluídos</div><div class="stat"><strong id="statScore">0</strong>pontos</div></div>
+          <div class="mini-actions"><button class="btn btn-primary" id="rollDiceSide">🎲 Rolar dado</button><button class="btn btn-ghost" id="resetSession">↺ Nova sessão</button></div>
         </div>
-        <p id="diceIntro">Clique para girar. O resultado escolhe um desafio para você.</p>
-      </div>
-
-      <div class="dice-stage glass">
-        <div class="dice-orbit orbit-a"></div>
-        <div class="dice-orbit orbit-b"></div>
-        <div class="dice-shadow"></div>
-        <button class="dice-button" id="rollDice" aria-label="Rolar dado">
-          <div class="die" id="die">
-            <div class="face front">1</div>
-            <div class="face back">6</div>
-            <div class="face right">3</div>
-            <div class="face left">4</div>
-            <div class="face top">2</div>
-            <div class="face bottom">5</div>
+        <div class="dice-stage">
+          <div class="dice-glow"></div>
+          <div class="dice-stage-inner">
+            <div style="display:grid;place-items:center;position:relative;min-height:240px">
+              <button class="dice-button" id="rollDice" aria-label="Rolar o dado" title="Rolar o dado"><div class="die-wrap"><div class="die" id="die"><div class="face front">1</div><div class="face back">6</div><div class="face right">3</div><div class="face left">4</div><div class="face top">2</div><div class="face bottom">5</div></div></div></button>
+            </div>
+            <div class="result-card" id="resultCard" aria-live="polite"><div class="result-kicker">RESULTADO</div><div class="result-value" id="resultValue">—</div><div class="result-label" id="resultLabel">Pronto?</div><div class="result-desc" id="resultDesc">Toque no dado para descobrir seu próximo desafio.</div><div class="result-actions"><button class="btn btn-secondary small hidden" id="completeCurrent">✅ Concluir desafio</button><button class="btn btn-primary small hidden" id="jumpCurrent">🎯 Ver desafio</button></div></div>
           </div>
-        </button>
-        <div class="dice-result" id="diceResult">Pronto?</div>
-        <div class="dice-hint" id="diceHint">Toque no dado para começar</div>
-        <div class="dice-actions">
-          <button class="btn btn-primary compact" id="rollDiceBottom">Rolar novamente</button>
-          <a class="btn btn-secondary compact" href="#desafios">Ver desafios</a>
         </div>
-      </div>
-    </section>
-
-    <section class="section" id="desafios">
-      <div class="section-heading">
-        <div>
-          <span class="section-kicker">MISSÕES</span>
-          <h2 id="challengeTitle">Desafios</h2>
-        </div>
-        <p id="challengeIntro">Todos os desafios cadastrados aparecem aqui.</p>
-      </div>
-      <div class="challenge-toolbar">
-        <div class="filters" id="challengeFilters"></div>
-        <span class="challenge-count" id="challengeCount"></span>
-      </div>
-      <div class="challenge-grid" id="challengeGrid"></div>
-    </section>
-
-    <section class="section game-embed-section" id="jogo">
-      <div class="section-heading">
-        <div>
-          <span class="section-kicker">JOGO</span>
-          <h2 id="gameSectionTitle">Abrir jogo</h2>
-        </div>
-        <p id="gameSectionIntro">Espaço preparado para o jogo principal.</p>
-      </div>
-      <div class="game-frame-wrap glass" id="gameFrameWrap">
-        <div class="game-empty" id="gameEmpty">
-          <div class="game-empty-icon">🕹️</div>
-          <h3 id="gameEmptyTitle">O jogo ainda não foi conectado</h3>
-          <p>Entre na área do desenvolvedor para definir a URL do jogo ou manter esta central como a experiência principal.</p>
-          <a class="btn btn-secondary" href="#desenvolvedor">Abrir área do desenvolvedor</a>
-        </div>
-        <iframe id="gameFrame" title="Jogo da pizzaria" loading="lazy" hidden></iframe>
-      </div>
-    </section>
-
-    <section class="section developer-section" id="desenvolvedor">
-      <div class="developer-card glass">
-        <div class="developer-badge">🔐 ÁREA RESTRITA</div>
-        <h2>Configurações do desenvolvedor</h2>
-        <p>O público não precisa de login. Somente o desenvolvedor acessa esta área usando o token e o e-mail cadastrados.</p>
-        <button class="btn btn-primary" id="openDevGate">Entrar como desenvolvedor</button>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div>
-      <strong id="footerName">Central do Jogo</strong>
-      <span>•</span>
-      <span id="footerTagline">Divirta-se e jogue com a galera.</span>
-    </div>
-    <a href="#inicio">Voltar ao topo ↑</a>
-  </footer>
-
-  <div class="modal-backdrop" id="popupModal" hidden>
-    <div class="modal startup-modal" role="dialog" aria-modal="true" aria-labelledby="popupModalTitle">
-      <button class="modal-close" id="closePopup" aria-label="Fechar">×</button>
-      <div class="modal-sparkle">✨</div>
-      <div class="modal-kicker" id="popupModalKicker">AVISO</div>
-      <h3 id="popupModalTitle">Bem-vindo!</h3>
-      <p id="popupModalBody">Confira as instruções e boa partida.</p>
-      <button class="btn btn-primary full" id="popupModalAction">Começar</button>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="devGateModal" hidden>
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="devGateTitle">
-      <button class="modal-close" id="closeDevGate" aria-label="Fechar">×</button>
-      <div class="modal-kicker">ACESSO DO DESENVOLVEDOR</div>
-      <h3 id="devGateTitle">Entrar no painel</h3>
-      <p class="muted">Primeiro informe o token de acesso. Depois confirme o e-mail do desenvolvedor.</p>
-      <form id="devGateForm" class="stack-form">
-        <label>Token de 4 caracteres
-          <input id="devToken" autocomplete="off" inputmode="text" maxlength="4" placeholder="••••" required />
-        </label>
-        <label>E-mail do desenvolvedor
-          <input id="devEmail" type="email" autocomplete="email" placeholder="nome@exemplo.com" required />
-        </label>
-        <div class="error-message" id="devError" hidden></div>
-        <button class="btn btn-primary full" type="submit">Acessar painel</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="adminModal" hidden>
-    <div class="modal admin-modal" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
-      <button class="modal-close" id="closeAdmin" aria-label="Fechar">×</button>
-      <div class="admin-header">
-        <div>
-          <div class="modal-kicker">MODO DESENVOLVEDOR</div>
-          <h3 id="adminTitle">Painel do jogo</h3>
-        </div>
-        <button class="btn btn-secondary compact" id="logoutDev">Sair</button>
-      </div>
-
-      <div class="admin-tabs" role="tablist">
-        <button class="admin-tab active" data-tab="geral">Geral</button>
-        <button class="admin-tab" data-tab="tutorial">Tutorial</button>
-        <button class="admin-tab" data-tab="desafios">Desafios</button>
-        <button class="admin-tab" data-tab="popup">Pop-up</button>
-        <button class="admin-tab" data-tab="jogo">Jogo</button>
-      </div>
-
-      <div class="admin-panel active" data-panel="geral">
-        <div class="admin-grid two">
-          <label>Nome exibido<input data-setting="brandName" /></label>
-          <label>Texto do rodapé<input data-setting="footerTagline" /></label>
-          <label>Cor principal<input data-setting="primaryColor" type="color" /></label>
-          <label>Cor de destaque<input data-setting="accentColor" type="color" /></label>
-          <label class="span-2">Título da página<input data-setting="heroTitle" /></label>
-          <label class="span-2">Texto principal<textarea data-setting="heroText"></textarea></label>
-          <label>Frase de topo<input data-setting="heroEyebrow" /></label>
-          <label>Texto do cartão inicial<input data-setting="heroChallengeSub" /></label>
-        </div>
-        <div class="upload-row">
-          <div>
-            <strong>Logo da pizzaria</strong>
-            <p>Você pode carregar a logo oficial aqui. Ela fica salva no navegador deste dispositivo.</p>
-          </div>
-          <label class="btn btn-secondary file-btn">Escolher logo<input id="logoUpload" type="file" accept="image/*" hidden /></label>
-        </div>
-      </div>
-
-      <div class="admin-panel" data-panel="tutorial">
-        <div class="admin-grid two">
-          <label>Título do tutorial<input data-setting="tutorialTitle" /></label>
-          <label>Introdução<textarea data-setting="tutorialIntro"></textarea></label>
-        </div>
-        <div class="editor-list" id="tutorialEditor"></div>
-        <button class="btn btn-secondary" id="addTutorial">+ Adicionar passo</button>
-      </div>
-
-      <div class="admin-panel" data-panel="desafios">
-        <div class="admin-grid two">
-          <label>Título da seção<input data-setting="challengeTitle" /></label>
-          <label>Introdução<textarea data-setting="challengeIntro"></textarea></label>
-        </div>
-        <div class="editor-list" id="challengeEditor"></div>
-        <button class="btn btn-secondary" id="addChallenge">+ Adicionar desafio</button>
-      </div>
-
-      <div class="admin-panel" data-panel="popup">
-        <div class="toggle-row">
-          <div><strong>Mostrar pop-up ao abrir o site</strong><p>O pop-up aparece uma vez por sessão do navegador.</p></div>
-          <label class="switch"><input data-setting="popupEnabled" type="checkbox" /><span></span></label>
-        </div>
-        <div class="admin-grid two">
-          <label>Etiqueta<input data-setting="popupKicker" /></label>
-          <label>Título<input data-setting="popupTitle" /></label>
-          <label class="span-2">Mensagem<textarea data-setting="popupBody"></textarea></label>
-          <label>Texto do botão<input data-setting="popupButton" /></label>
-        </div>
-      </div>
-
-      <div class="admin-panel" data-panel="jogo">
-        <div class="admin-grid two">
-          <label>Título da área<input data-setting="gameSectionTitle" /></label>
-          <label>Texto da área<textarea data-setting="gameSectionIntro"></textarea></label>
-          <label class="span-2">URL do jogo (https://...)<input data-setting="gameUrl" placeholder="https://seu-jogo.exemplo.com" /></label>
-          <label class="span-2">Título quando não houver jogo<input data-setting="gameEmptyTitle" /></label>
-        </div>
-        <div class="tip-box">💡 Para usar um jogo externo, informe uma URL que permita incorporação em iframe. Se o jogo for um projeto local, hospede-o e use a URL publicada.</div>
-      </div>
-
-      <div class="admin-actions">
-        <div class="save-state" id="saveState">Alterações locais</div>
-        <button class="btn btn-secondary" id="resetDefaults">Restaurar padrão</button>
-        <button class="btn btn-primary" id="saveSettings">Salvar alterações</button>
       </div>
     </div>
   </div>
+</section>
 
-  <script src="app.js"></script>
+<section class="section" id="desafios">
+  <div class="container">
+    <div class="section-head"><div><div class="kicker">MISSÕES</div><h2 id="challengeTitle">Desafios</h2></div><p id="challengeIntro">Escolha uma categoria ou deixe o dado decidir.</p></div>
+    <div class="toolbar"><div class="filters" id="challengeFilters"></div><span class="count" id="challengeCount"></span></div>
+    <div class="challenge-grid" id="challengeGrid"></div>
+  </div>
+</section>
+
+<section class="section" id="jogo">
+  <div class="container">
+    <div class="section-head"><div><div class="kicker">JOGO</div><h2 id="gameSectionTitle">Abrir jogo</h2></div><p id="gameSectionIntro">Espaço preparado para o jogo principal.</p></div>
+    <div class="game-panel"><div class="game-header"><div><b id="gameFrameTitle">Jogo da pizzaria</b></div><div class="game-status"><span class="status-dot" id="gameStatusDot"></span><span id="gameStatusText">Aguardando conexão</span></div></div><div class="game-body" id="gameBody"><div class="game-empty"><div class="game-empty-icon">🕹️</div><h3 id="gameEmptyTitle">O jogo ainda não foi conectado</h3><p>Você pode configurar a URL do jogo no painel do desenvolvedor. Enquanto isso, esta central já funciona como uma experiência completa de dado + desafios.</p><a class="btn btn-secondary" href="#desenvolvedor">Configurar jogo</a></div></div><iframe id="gameFrame" title="Jogo da pizzaria" loading="lazy" class="hidden"></iframe></div>
+  </div>
+</section>
+
+<section class="section dev-area" id="desenvolvedor">
+  <div class="container"><div class="dev-card"><div class="dev-copy"><div class="kicker">ACESSO RESTRITO</div><h2>Área do desenvolvedor</h2><p>Sem login para o público. O painel permite editar textos, cores, tutorial, desafios, pop-up, logo e jogo principal.</p></div><button class="btn btn-primary" id="openDevGate">🔐 Entrar no painel</button></div></div>
+</section>
+</main>
+
+<footer><div class="container inner"><div><b id="footerName">Central do Jogo</b> <span>•</span> <span id="footerTagline">Divirta-se e jogue com a galera.</span></div><a href="#inicio">Voltar ao topo ↑</a></div></footer>
+
+<!-- Pop-up inicial -->
+<div class="modal-backdrop hidden" id="popupModal"><div class="modal startup-modal" role="dialog" aria-modal="true" aria-labelledby="popupTitleView"><button class="modal-close" id="closePopup" aria-label="Fechar">×</button><div class="sparkle" id="popupIcon">✨</div><div class="modal-kicker" id="popupKickerView">AVISO</div><h3 id="popupTitleView">Bem-vindo!</h3><p id="popupBodyView">Confira as instruções e boa partida.</p><button class="btn btn-primary full" id="popupAction">Começar</button></div></div>
+
+<!-- Portão de desenvolvedor -->
+<div class="modal-backdrop hidden" id="devGateModal"><div class="modal startup-modal" role="dialog" aria-modal="true" aria-labelledby="devGateTitle"><button class="modal-close" id="closeDevGate" aria-label="Fechar">×</button><div class="modal-kicker">ACESSO DO DESENVOLVEDOR</div><h3 id="devGateTitle">Entrar no painel</h3><p>Informe o token de 4 caracteres e depois confirme o e-mail do desenvolvedor.</p><form class="stack" id="devGateForm"><label class="field"><span>Token</span><input id="devToken" maxlength="4" autocomplete="off" inputmode="text" placeholder="••••" required></label><label class="field"><span>E-mail</span><input id="devEmail" type="email" autocomplete="email" placeholder="nome@exemplo.com" required></label><div class="error hidden" id="devError"></div><button class="btn btn-primary full" type="submit">Acessar painel</button></form></div></div>
+
+<!-- Painel -->
+<div class="modal-backdrop hidden" id="adminModal"><div class="modal admin" role="dialog" aria-modal="true" aria-labelledby="adminTitle"><button class="modal-close" id="closeAdmin" aria-label="Fechar">×</button><div class="admin-head"><div><div class="modal-kicker">MODO DESENVOLVEDOR</div><h3 id="adminTitle">Painel do jogo</h3></div><button class="btn btn-secondary small" id="logoutDev">Sair</button></div><div class="admin-tabs" role="tablist"><button class="tab active" data-tab="geral">Geral</button><button class="tab" data-tab="tutorial">Tutorial</button><button class="tab" data-tab="desafios">Desafios</button><button class="tab" data-tab="popup">Pop-up</button><button class="tab" data-tab="jogo">Jogo</button></div>
+
+<div class="panel active" data-panel="geral"><div class="editor-grid"><label class="field"><span>Nome exibido</span><input data-setting="brandName"></label><label class="field"><span>Texto do rodapé</span><input data-setting="footerTagline"></label><label class="field"><span>Cor principal</span><input data-setting="primaryColor" type="color"></label><label class="field"><span>Cor de destaque</span><input data-setting="accentColor" type="color"></label><label class="field span-2"><span>Título principal</span><input data-setting="heroTitle"></label><label class="field span-2"><span>Texto principal</span><textarea data-setting="heroText"></textarea></label><label class="field"><span>Frase de topo</span><input data-setting="heroEyebrow"></label><label class="field"><span>Subtexto do cartão</span><input data-setting="heroChallengeSub"></label></div><div class="upload-row"><div><b>Logo da pizzaria</b><p>Escolha uma imagem; ela fica salva neste navegador. Você pode remover depois.</p><div class="mini-actions"><button class="btn btn-ghost small" id="removeLogo" type="button">Remover logo</button></div></div><div style="display:flex;align-items:center;gap:10px"><img class="logo-preview" id="logoPreview" alt="Prévia da logo"><label class="btn btn-secondary small">Escolher logo<input id="logoUpload" type="file" accept="image/*" hidden></label></div></div></div>
+
+<div class="panel" data-panel="tutorial"><div class="editor-grid"><label class="field"><span>Título</span><input data-setting="tutorialTitle"></label><label class="field"><span>Introdução</span><textarea data-setting="tutorialIntro"></textarea></label></div><div id="tutorialEditor"></div><button class="btn btn-secondary" id="addTutorial" type="button" style="margin-top:12px">+ Adicionar passo</button></div>
+
+<div class="panel" data-panel="desafios"><div class="editor-grid"><label class="field"><span>Título da seção</span><input data-setting="challengeTitle"></label><label class="field"><span>Introdução</span><textarea data-setting="challengeIntro"></textarea></label></div><div id="challengeEditor"></div><button class="btn btn-secondary" id="addChallenge" type="button" style="margin-top:12px">+ Adicionar desafio</button></div>
+
+<div class="panel" data-panel="popup"><div class="toggle-row"><div><b>Mostrar pop-up na abertura</b><p>O pop-up aparece uma vez por sessão do navegador.</p></div><label class="switch"><input data-setting="popupEnabled" type="checkbox"><span></span></label></div><div class="editor-grid"><label class="field"><span>Etiqueta</span><input data-setting="popupKicker"></label><label class="field"><span>Título</span><input data-setting="popupTitle"></label><label class="field span-2"><span>Mensagem</span><textarea data-setting="popupBody"></textarea></label><label class="field"><span>Botão</span><input data-setting="popupButton"></label><label class="field"><span>Ícone</span><input data-setting="popupIcon"></label></div></div>
+
+<div class="panel" data-panel="jogo"><div class="editor-grid"><label class="field"><span>Título da área</span><input data-setting="gameSectionTitle"></label><label class="field"><span>Texto da área</span><textarea data-setting="gameSectionIntro"></textarea></label><label class="field span-2"><span>URL do jogo</span><input data-setting="gameUrl" placeholder="https://seu-jogo.exemplo.com"></label><label class="field span-2"><span>Título quando não houver jogo</span><input data-setting="gameEmptyTitle"></label></div><div class="tip">💡 O iframe só funciona quando a página do jogo permite incorporação. Para testes locais, abra o HTML diretamente e configure uma URL publicada quando estiver pronta.</div></div>
+
+<div class="admin-actions"><div class="save-state" id="saveState">Alterações não salvas</div><button class="btn btn-secondary" id="resetDefaults" type="button">Restaurar padrão</button><button class="btn btn-primary" id="saveSettings" type="button">Salvar alterações</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+  const DEV_EMAIL='thdyazpereira@gmail.com';
+  const DEV_TOKEN='Td@0';
+  const STORAGE='pizzariaCentralGame_v2';
+  const defaultData={
+    settings:{brandName:'JOGO',footerTagline:'Divirta-se e jogue com a galera.',primaryColor:'#ff7a18',accentColor:'#7c5cff',heroEyebrow:'PRONTO PARA JOGAR?',heroTitle:'Jogue.<br><span>Role o dado.</span><br>Encare o desafio.',heroText:'Uma central rápida para entender a partida, rolar o dado e descobrir o próximo desafio.',heroChallengeSub:'Role o dado para descobrir seu desafio.',tutorialTitle:'Como jogar',tutorialIntro:'Leia o passo a passo, depois vá para o dado e comece a missão.',diceTitle:'Role o dado',diceIntro:'Toque no dado. Cada resultado libera um desafio e adiciona pontos quando você completar a missão.',challengeTitle:'Desafios',challengeIntro:'Escolha uma categoria ou deixe o dado decidir.',gameSectionTitle:'Abrir jogo',gameSectionIntro:'Espaço preparado para o jogo principal.',gameUrl:'',gameEmptyTitle:'O jogo ainda não foi conectado',popupEnabled:true,popupKicker:'AVISO',popupTitle:'Bem-vindo!',popupBody:'Confira as instruções e boa partida.',popupButton:'Começar',popupIcon:'✨'},
+    tutorial:[
+      {icon:'👀',title:'Entenda a rodada',text:'Leia o desafio que aparecer depois da rolagem e chame a galera para participar.'},
+      {icon:'🎲',title:'Role o dado',text:'Toque no dado grande para sortear o próximo número da partida.'},
+      {icon:'🔥',title:'Cumpra a missão',text:'Faça o desafio e, quando terminar, marque como concluído para ganhar pontos.'},
+      {icon:'🏆',title:'Jogue de novo',text:'Continue rolando para criar uma sequência e acumular mais pontos.'}
+    ],
+    challenges:[
+      {icon:'😂',title:'Mestre da imitação',text:'Imite uma pessoa famosa ou personagem por 20 segundos. A galera tenta adivinhar.',category:'Diversão',difficulty:'Fácil',points:20},
+      {icon:'🎤',title:'Cantoria relâmpago',text:'Escolha uma música conhecida e cante o refrão sem parar. Vale performance.',category:'Música',difficulty:'Médio',points:30},
+      {icon:'🤝',title:'Dupla improvável',text:'Escolha alguém e inventem juntos uma frase publicitária para a pizzaria.',category:'Galera',difficulty:'Fácil',points:20},
+      {icon:'🧠',title:'Desafio relâmpago',text:'Em 10 segundos, fale três coisas que você levaria para uma ilha deserta.',category:'Raciocínio',difficulty:'Médio',points:30},
+      {icon:'🕺',title:'Passinho surpresa',text:'Dance por 15 segundos com um estilo escolhido por outra pessoa.',category:'Diversão',difficulty:'Médio',points:30},
+      {icon:'📸',title:'Foto criativa',text:'Monte uma pose coletiva com a galera e crie a foto mais divertida da rodada.',category:'Galera',difficulty:'Fácil',points:20}
+    ]
+  };
+
+  const deepClone=o=>JSON.parse(JSON.stringify(o));
+  let data=loadData();
+  let state={rolls:0,completed:0,score:0,streak:0,current:null,history:[],sound:true};
+  let activeFilter='Todos';
+
+  function loadData(){
+    try{
+      const raw=localStorage.getItem(STORAGE);
+      if(raw){
+        const parsed=JSON.parse(raw);
+        return {...deepClone(defaultData),...parsed,settings:{...defaultData.settings,...(parsed.settings||{})},tutorial:Array.isArray(parsed.tutorial)?parsed.tutorial:deepClone(defaultData.tutorial),challenges:Array.isArray(parsed.challenges)?parsed.challenges:deepClone(defaultData.challenges)};
+      }
+    }catch(e){}
+    return deepClone(defaultData);
+  }
+  function saveData(){localStorage.setItem(STORAGE,JSON.stringify(data));}
+  const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+  function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+  function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2200)}
+  function openModal(id){$(id).classList.remove('hidden');document.body.classList.add('modal-open')}
+  function closeModal(id){$(id).classList.add('hidden');if($$('.modal-backdrop:not(.hidden)').length===0)document.body.classList.remove('modal-open')}
+  function applyTheme(){document.documentElement.style.setProperty('--primary',data.settings.primaryColor);document.documentElement.style.setProperty('--accent',data.settings.accentColor);}
+  function applyText(){
+    $('#brandName').textContent=data.settings.brandName;$('#footerName').textContent='Central do '+data.settings.brandName;$('#footerTagline').textContent=data.settings.footerTagline;$('#heroEyebrow').textContent=data.settings.heroEyebrow;$('#heroTitle').innerHTML=data.settings.heroTitle;$('#heroText').textContent=data.settings.heroText;$('#heroChallengeSub').textContent=data.settings.heroChallengeSub;$('#tutorialTitle').textContent=data.settings.tutorialTitle;$('#tutorialIntro').textContent=data.settings.tutorialIntro;$('#diceTitle').textContent=data.settings.diceTitle;$('#diceIntro').textContent=data.settings.diceIntro;$('#challengeTitle').textContent=data.settings.challengeTitle;$('#challengeIntro').textContent=data.settings.challengeIntro;$('#gameSectionTitle').textContent=data.settings.gameSectionTitle;$('#gameSectionIntro').textContent=data.settings.gameSectionIntro;$('#gameEmptyTitle').textContent=data.settings.gameEmptyTitle;$('#popupKickerView').textContent=data.settings.popupKicker;$('#popupTitleView').textContent=data.settings.popupTitle;$('#popupBodyView').textContent=data.settings.popupBody;$('#popupAction').textContent=data.settings.popupButton;$('#popupIcon').textContent=data.settings.popupIcon;
+    const icon=data.settings.logoData||'';const mark=$('#brandMark');if(icon){mark.innerHTML='<img src="'+icon+'" alt="Logo" style="width:100%;height:100%;object-fit:cover;border-radius:13px">';$('#logoPreview').src=icon}else{mark.textContent='🍕';$('#logoPreview').removeAttribute('src')}
+  }
+  function renderTutorial(){
+    $('#tutorialGrid').innerHTML=data.tutorial.map((s,i)=>'<article class="step-card reveal"><div class="step-no">0'+(i+1)+'</div><div class="step-icon">'+escapeHtml(s.icon)+'</div><h3>'+escapeHtml(s.title)+'</h3><p>'+escapeHtml(s.text)+'</p></article>').join('');
+    $('#tutorialEditor').innerHTML=data.tutorial.map((s,i)=>'<div class="section-box"><div class="editor-row" data-tutorial-row="'+i+'"><label class="field"><span>Ícone</span><input class="emoji-input" value="'+escapeHtml(s.icon)+'" data-k="icon"></label><label class="field"><span>Título</span><input value="'+escapeHtml(s.title)+'" data-k="title"></label><label class="field"><span>Texto</span><textarea data-k="text">'+escapeHtml(s.text)+'</textarea></label><button class="danger" type="button" data-remove-tutorial="'+i+'">×</button></div></div>').join('');
+  }
+  function categories(){return ['Todos',...new Set(data.challenges.map(c=>c.category).filter(Boolean))]}
+  function renderFilters(){
+    const fs=categories();if(!fs.includes(activeFilter))activeFilter='Todos';$('#challengeFilters').innerHTML=fs.map(f=>'<button class="filter '+(f===activeFilter?'active':'')+'" data-filter="'+escapeHtml(f)+'">'+escapeHtml(f)+'</button>').join('');$('#challengeCount').textContent=data.challenges.filter(c=>activeFilter==='Todos'||c.category===activeFilter).length+' desafio(s)';
+  }
+  function getVisibleChallenges(){return data.challenges.filter(c=>activeFilter==='Todos'||c.category===activeFilter)}
+  function renderChallenges(){
+    const list=getVisibleChallenges();$('#challengeGrid').innerHTML=list.map((c)=>{const realIndex=data.challenges.indexOf(c);const done=state.history.includes(realIndex);return '<article class="challenge-card '+(done?'completed':'')+'" id="challenge-'+realIndex+'"><div class="challenge-top"><div class="challenge-icon">'+escapeHtml(c.icon)+'</div><div class="badge '+(done?'completed-badge':'')+'">'+(done?'CONCLUÍDO':escapeHtml(c.difficulty||'Médio').toUpperCase())+'</div></div><h3>'+escapeHtml(c.title)+'</h3><p>'+escapeHtml(c.text)+'</p><div class="challenge-bottom"><span class="points"><strong>+'+Number(c.points||0)+'</strong> pontos</span><button class="btn '+(done?'btn-ghost':'btn-secondary')+' small" data-complete="'+realIndex+'">'+(done?'↺ Reabrir':'✅ Concluir')+'</button></div></article>'}).join('');
+  }
+  function renderChallengeEditor(){
+    $('#challengeEditor').innerHTML=data.challenges.map((c,i)=>'<div class="section-box"><div class="editor-row"><label class="field"><span>Ícone</span><input class="emoji-input" value="'+escapeHtml(c.icon)+'" data-cchallenge="icon" data-i="'+i+'"></label><label class="field"><span>Título</span><input value="'+escapeHtml(c.title)+'" data-cchallenge="title" data-i="'+i+'"></label><label class="field"><span>Texto</span><textarea data-cchallenge="text" data-i="'+i+'">'+escapeHtml(c.text)+'</textarea></label><label class="field field-difficulty"><span>Categoria • dificuldade • pontos</span><input value="'+escapeHtml(c.category||'Diversão')+'|'+escapeHtml(c.difficulty||'Médio')+'|'+Number(c.points||20)+'" data-cchallenge="meta" data-i="'+i+'"></label><button class="danger" type="button" data-remove-challenge="'+i+'">×</button></div></div>').join('');
+  }
+  function renderGame(){const url=(data.settings.gameUrl||'').trim();const frame=$('#gameFrame');const body=$('#gameBody');const dot=$('#gameStatusDot');const status=$('#gameStatusText');if(url){frame.classList.remove('hidden');frame.src=url;body.classList.add('hidden');dot.classList.add('on');status.textContent='Jogo conectado'}else{frame.classList.add('hidden');frame.removeAttribute('src');body.classList.remove('hidden');dot.classList.remove('on');status.textContent='Aguardando conexão'}}
+  function setSettingInputs(){ $$('[data-setting]').forEach(el=>{const key=el.dataset.setting;if(el.type==='checkbox')el.checked=!!data.settings[key];else el.value=data.settings[key]??''}); }
+  function collectSettings(){ $$('[data-setting]').forEach(el=>{const key=el.dataset.setting;data.settings[key]=el.type==='checkbox'?el.checked:el.value}); }
+  function bindEditorChanges(){
+    $('#tutorialEditor').addEventListener('input',e=>{const row=e.target.closest('[data-tutorial-row]');if(!row)return;const i=+row.dataset.tutorialRow;data.tutorial[i][e.target.dataset.k]=e.target.value;markDirty()});
+    $('#challengeEditor').addEventListener('input',e=>{const i=e.target.dataset.i,k=e.target.dataset.cchallenge;if(i===undefined)return;const idx=+i;if(k==='meta'){const [category,difficulty,points]=e.target.value.split('|');data.challenges[idx].category=category||'Diversão';data.challenges[idx].difficulty=difficulty||'Médio';data.challenges[idx].points=Math.max(0,+points||0)}else data.challenges[idx][k]=e.target.value;markDirty()});
+  }
+  function markDirty(){$('#saveState').textContent='Alterações não salvas'}
+  function markSaved(){$('#saveState').textContent='Salvo neste navegador'}
+  function syncAll(){applyTheme();applyText();renderTutorial();renderFilters();renderChallenges();renderChallengeEditor();renderGame();setSettingInputs();updateStats();}
+  function updateStats(){$('#statRolls').textContent=state.rolls;$('#statCompleted').textContent=state.completed;$('#statScore').textContent=state.score;$('#heroScore').textContent=state.score;$('#heroStreak').textContent=state.streak}
+
+  function resultFromRoll(n){
+    if(!data.challenges.length)return null;
+    const idx=(n-1)%data.challenges.length;return {...data.challenges[idx],index:idx,roll:n};
+  }
+  function faceTransform(n){return {1:'rotateX(0deg) rotateY(0deg)',2:'rotateX(-90deg) rotateY(0deg)',3:'rotateX(0deg) rotateY(-90deg)',4:'rotateX(0deg) rotateY(90deg)',5:'rotateX(90deg) rotateY(0deg)',6:'rotateX(180deg) rotateY(0deg)'}[n]||'rotateX(0deg) rotateY(0deg)'}
+  function beep(freq=420,duration=.06){if(!state.sound)return;try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ac=new AC();const osc=ac.createOscillator();const gain=ac.createGain();osc.frequency.value=freq;osc.type='sine';gain.gain.value=.02;osc.connect(gain);gain.connect(ac.destination);osc.start();setTimeout(()=>{osc.stop();ac.close()},duration*1000)}catch(e){}}
+  function rollDice(){
+    if(!data.challenges.length){toast('Adicione pelo menos um desafio no painel.');return}
+    const btn=$('#rollDice');if(btn.classList.contains('rolling'))return;btn.classList.add('rolling');
+    const n=Math.floor(Math.random()*6)+1;state.rolls++;beep(250,.08);beep(350,.09);beep(500,.1);
+    const challenge=resultFromRoll(n);state.current=challenge;$('#die').style.transform=faceTransform(n);$('#resultValue').textContent=n;$('#resultLabel').textContent=challenge.title;$('#resultDesc').textContent=challenge.text;$('#heroChallengeIcon').textContent=challenge.icon;$('#heroChallengeTitle').textContent=challenge.title;$('#heroChallengeSub').textContent=challenge.text;$('#completeCurrent').classList.remove('hidden');$('#jumpCurrent').classList.remove('hidden');updateStats();renderChallenges();
+    setTimeout(()=>btn.classList.remove('rolling'),1100);setTimeout(()=>document.getElementById('dado').scrollIntoView({behavior:'smooth',block:'center'}),80)
+  }
+  function complete(index){
+    const c=data.challenges[index];if(!c)return;if(state.history.includes(index)){state.history=state.history.filter(i=>i!==index);state.completed=Math.max(0,state.completed-1);state.score=Math.max(0,state.score-Number(c.points||0));state.streak=Math.max(0,state.streak-1);toast('Desafio reaberto.')}else{state.history.push(index);state.completed++;state.score+=Number(c.points||0);state.streak++;toast('Missão concluída! +'+Number(c.points||0)+' pontos');beep(720,.11);beep(900,.12)}updateStats();renderChallenges()}
+  function resetSession(){state={...state,rolls:0,completed:0,score:0,streak:0,current:null,history:[]};$('#resultValue').textContent='—';$('#resultLabel').textContent='Pronto?';$('#resultDesc').textContent='Toque no dado para descobrir seu próximo desafio.';$('#completeCurrent').classList.add('hidden');$('#jumpCurrent').classList.add('hidden');$('#heroChallengeIcon').textContent='🔥';$('#heroChallengeTitle').textContent='A sorte decidiu.';$('#heroChallengeSub').textContent=data.settings.heroChallengeSub;$('#die').style.transform='rotateX(0deg) rotateY(0deg)';updateStats();renderChallenges();toast('Nova sessão iniciada')}
+
+  // Events
+  $('#rollDice').addEventListener('click',rollDice);$('#rollDiceSide').addEventListener('click',rollDice);$('#resetSession').addEventListener('click',resetSession);$('#soundToggle').addEventListener('click',()=>{state.sound=!state.sound;$('#soundToggle').textContent=state.sound?'🔊 Som':'🔇 Som';toast(state.sound?'Som ativado':'Som desativado')});
+  $('#completeCurrent').addEventListener('click',()=>state.current&&complete(state.current.index));$('#jumpCurrent').addEventListener('click',()=>state.current&&document.getElementById('challenge-'+state.current.index)?.scrollIntoView({behavior:'smooth',block:'center'}));
+  $('#challengeFilters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;activeFilter=b.dataset.filter;renderFilters();renderChallenges()});
+  $('#challengeGrid').addEventListener('click',e=>{const b=e.target.closest('[data-complete]');if(!b)return;complete(+b.dataset.complete)});
+  ['#closePopup','#closeDevGate','#closeAdmin'].forEach(sel=>$(sel).addEventListener('click',()=>closeModal($(sel).parentElement.parentElement.id)));
+  $$('.modal-backdrop').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal('#'+m.id)}));
+  $('#openDevGate').addEventListener('click',()=>{ $('#devToken').value='';$('#devEmail').value='';$('#devError').classList.add('hidden');openModal('#devGateModal');setTimeout(()=>$('#devToken').focus(),50)});
+  $('#devGateForm').addEventListener('submit',e=>{e.preventDefault();const token=$('#devToken').value.trim();const email=$('#devEmail').value.trim().toLowerCase();if(token===DEV_TOKEN&&email===DEV_EMAIL){closeModal('#devGateModal');openModal('#adminModal');setSettingInputs();markSaved();toast('Painel liberado')}else{$('#devError').textContent='Token ou e-mail inválido.';$('#devError').classList.remove('hidden')}});
+  $('#logoutDev').addEventListener('click',()=>closeModal('#adminModal'));
+  $$('.tab').forEach(t=>t.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));$$('.panel').forEach(x=>x.classList.remove('active'));t.classList.add('active');$('[data-panel="'+t.dataset.tab+'"]').classList.add('active')}));
+  $$('[data-setting]').forEach(el=>el.addEventListener('input',markDirty));
+  $('#saveSettings').addEventListener('click',()=>{collectSettings();saveData();syncAll();markSaved();toast('Alterações salvas')});
+  $('#resetDefaults').addEventListener('click',()=>{if(!confirm('Restaurar tudo para o padrão?'))return;data=deepClone(defaultData);saveData();syncAll();markSaved();toast('Padrões restaurados')});
+  $('#addTutorial').addEventListener('click',()=>{data.tutorial.push({icon:'✨',title:'Novo passo',text:'Escreva aqui como este passo funciona.'});renderTutorial();bindTutorialRemove();markDirty()});
+  function bindTutorialRemove(){$$('[data-remove-tutorial]').forEach(b=>b.onclick=()=>{const i=+b.dataset.removeTutorial;data.tutorial.splice(i,1);renderTutorial();bindTutorialRemove();markDirty()})}
+  $('#addChallenge').addEventListener('click',()=>{data.challenges.push({icon:'🎯',title:'Novo desafio',text:'Descreva aqui a missão.',category:'Diversão',difficulty:'Fácil',points:20});renderChallengeEditor();bindChallengeRemove();renderFilters();renderChallenges();markDirty()});
+  function bindChallengeRemove(){$$('[data-remove-challenge]').forEach(b=>b.onclick=()=>{const i=+b.dataset.removeChallenge;data.challenges.splice(i,1);renderChallengeEditor();bindChallengeRemove();renderFilters();renderChallenges();markDirty()})}
+  $('#logoUpload').addEventListener('change',e=>{const file=e.target.files?.[0];if(!file)return;if(file.size>1500000){toast('Use uma logo de até 1,5 MB.');return}const reader=new FileReader();reader.onload=()=>{data.settings.logoData=reader.result;applyText();markDirty();toast('Logo carregada. Salve as alterações.')};reader.readAsDataURL(file)});
+  $('#removeLogo').addEventListener('click',()=>{delete data.settings.logoData;applyText();markDirty();toast('Logo removida. Salve as alterações.')});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$('.modal-backdrop:not(.hidden)').forEach(m=>closeModal('#'+m.id))}if((e.key===' '||e.key==='Enter')&&document.activeElement===document.body&&location.hash==='#dado'){e.preventDefault();rollDice()}});
+  bindEditorChanges();bindTutorialRemove();bindChallengeRemove();syncAll();
+
+  if(data.settings.popupEnabled&&!sessionStorage.getItem('pizzariaPopupSeen')){setTimeout(()=>openModal('#popupModal'),900)}
+  $('#popupAction').addEventListener('click',()=>{sessionStorage.setItem('pizzariaPopupSeen','1');closeModal('#popupModal');document.querySelector('#dado').scrollIntoView({behavior:'smooth',block:'center'})});
+  $('#closePopup').addEventListener('click',()=>sessionStorage.setItem('pizzariaPopupSeen','1'));
+})();
+</script>
 </body>
 </html>
