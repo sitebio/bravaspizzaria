@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#141414" />
+  <meta name="description" content="Central de suporte e jogo da pizzaria." />
+  <title>Pizzaria • Central do Jogo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="Início">
+      <div class="brand-mark" id="brandMark">🍕</div>
+      <div>
+        <span class="brand-kicker">CENTRAL DO</span>
+        <strong id="brandName">JOGO</strong>
+      </div>
+    </a>
+    <nav class="topnav" aria-label="Navegação principal">
+      <a href="#como-jogar">Como jogar</a>
+      <a href="#dado">Dado</a>
+      <a href="#desafios">Desafios</a>
+    </nav>
+    <a class="ghost-link" href="#desenvolvedor">Desenvolvedor</a>
+  </header>
+
+  <main>
+    <section class="hero section" id="inicio">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse"></span><span id="heroEyebrow">PRONTO PARA JOGAR?</span></div>
+        <h1 id="heroTitle">Jogue.<br/><span>Role o dado.</span><br/>Encare o desafio.</h1>
+        <p id="heroText">Uma central rápida para entender a partida, rolar o dado e descobrir o próximo desafio.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#dado">🎲 Rolar o dado</a>
+          <a class="btn btn-secondary" href="#como-jogar">Ver instruções</a>
+        </div>
+        <div class="hero-meta">
+          <span>⚡ Sem cadastro</span>
+          <span>📱 Feito para celular</span>
+          <span>🧩 Desafios configuráveis</span>
+        </div>
+      </div>
+      <div class="hero-card glass" aria-hidden="true">
+        <div class="mini-label">PRÓXIMO DESAFIO</div>
+        <div class="hero-card-icon" id="heroChallengeIcon">🔥</div>
+        <div class="hero-card-title" id="heroChallengeTitle">A sorte decidiu.</div>
+        <div class="hero-card-sub" id="heroChallengeSub">Role o dado para descobrir seu desafio.</div>
+        <div class="mini-dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+    </section>
+
+    <section class="section" id="como-jogar">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">COMECE AQUI</span>
+          <h2 id="tutorialTitle">Como jogar</h2>
+        </div>
+        <p id="tutorialIntro">Leia o passo a passo e depois vá direto para o dado.</p>
+      </div>
+      <div class="tutorial-grid" id="tutorialGrid"></div>
+    </section>
+
+    <section class="section dice-section" id="dado">
+      <div class="section-heading centered">
+        <div>
+          <span class="section-kicker">MOMENTO DA SORTE</span>
+          <h2 id="diceTitle">Role o dado</h2>
+        </div>
+        <p id="diceIntro">Clique para girar. O resultado escolhe um desafio para você.</p>
+      </div>
+
+      <div class="dice-stage glass">
+        <div class="dice-orbit orbit-a"></div>
+        <div class="dice-orbit orbit-b"></div>
+        <div class="dice-shadow"></div>
+        <button class="dice-button" id="rollDice" aria-label="Rolar dado">
+          <div class="die" id="die">
+            <div class="face front">1</div>
+            <div class="face back">6</div>
+            <div class="face right">3</div>
+            <div class="face left">4</div>
+            <div class="face top">2</div>
+            <div class="face bottom">5</div>
+          </div>
+        </button>
+        <div class="dice-result" id="diceResult">Pronto?</div>
+        <div class="dice-hint" id="diceHint">Toque no dado para começar</div>
+        <div class="dice-actions">
+          <button class="btn btn-primary compact" id="rollDiceBottom">Rolar novamente</button>
+          <a class="btn btn-secondary compact" href="#desafios">Ver desafios</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="desafios">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">MISSÕES</span>
+          <h2 id="challengeTitle">Desafios</h2>
+        </div>
+        <p id="challengeIntro">Todos os desafios cadastrados aparecem aqui.</p>
+      </div>
+      <div class="challenge-toolbar">
+        <div class="filters" id="challengeFilters"></div>
+        <span class="challenge-count" id="challengeCount"></span>
+      </div>
+      <div class="challenge-grid" id="challengeGrid"></div>
+    </section>
+
+    <section class="section game-embed-section" id="jogo">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">JOGO</span>
+          <h2 id="gameSectionTitle">Abrir jogo</h2>
+        </div>
+        <p id="gameSectionIntro">Espaço preparado para o jogo principal.</p>
+      </div>
+      <div class="game-frame-wrap glass" id="gameFrameWrap">
+        <div class="game-empty" id="gameEmpty">
+          <div class="game-empty-icon">🕹️</div>
+          <h3 id="gameEmptyTitle">O jogo ainda não foi conectado</h3>
+          <p>Entre na área do desenvolvedor para definir a URL do jogo ou manter esta central como a experiência principal.</p>
+          <a class="btn btn-secondary" href="#desenvolvedor">Abrir área do desenvolvedor</a>
+        </div>
+        <iframe id="gameFrame" title="Jogo da pizzaria" loading="lazy" hidden></iframe>
+      </div>
+    </section>
+
+    <section class="section developer-section" id="desenvolvedor">
+      <div class="developer-card glass">
+        <div class="developer-badge">🔐 ÁREA RESTRITA</div>
+        <h2>Configurações do desenvolvedor</h2>
+        <p>O público não precisa de login. Somente o desenvolvedor acessa esta área usando o token e o e-mail cadastrados.</p>
+        <button class="btn btn-primary" id="openDevGate">Entrar como desenvolvedor</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <strong id="footerName">Central do Jogo</strong>
+      <span>•</span>
+      <span id="footerTagline">Divirta-se e jogue com a galera.</span>
+    </div>
+    <a href="#inicio">Voltar ao topo ↑</a>
+  </footer>
+
+  <div class="modal-backdrop" id="popupModal" hidden>
+    <div class="modal startup-modal" role="dialog" aria-modal="true" aria-labelledby="popupModalTitle">
+      <button class="modal-close" id="closePopup" aria-label="Fechar">×</button>
+      <div class="modal-sparkle">✨</div>
+      <div class="modal-kicker" id="popupModalKicker">AVISO</div>
+      <h3 id="popupModalTitle">Bem-vindo!</h3>
+      <p id="popupModalBody">Confira as instruções e boa partida.</p>
+      <button class="btn btn-primary full" id="popupModalAction">Começar</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="devGateModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="devGateTitle">
+      <button class="modal-close" id="closeDevGate" aria-label="Fechar">×</button>
+      <div class="modal-kicker">ACESSO DO DESENVOLVEDOR</div>
+      <h3 id="devGateTitle">Entrar no painel</h3>
+      <p class="muted">Primeiro informe o token de acesso. Depois confirme o e-mail do desenvolvedor.</p>
+      <form id="devGateForm" class="stack-form">
+        <label>Token de 4 caracteres
+          <input id="devToken" autocomplete="off" inputmode="text" maxlength="4" placeholder="••••" required />
+        </label>
+        <label>E-mail do desenvolvedor
+          <input id="devEmail" type="email" autocomplete="email" placeholder="nome@exemplo.com" required />
+        </label>
+        <div class="error-message" id="devError" hidden></div>
+        <button class="btn btn-primary full" type="submit">Acessar painel</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="adminModal" hidden>
+    <div class="modal admin-modal" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+      <button class="modal-close" id="closeAdmin" aria-label="Fechar">×</button>
+      <div class="admin-header">
+        <div>
+          <div class="modal-kicker">MODO DESENVOLVEDOR</div>
+          <h3 id="adminTitle">Painel do jogo</h3>
+        </div>
+        <button class="btn btn-secondary compact" id="logoutDev">Sair</button>
+      </div>
+
+      <div class="admin-tabs" role="tablist">
+        <button class="admin-tab active" data-tab="geral">Geral</button>
+        <button class="admin-tab" data-tab="tutorial">Tutorial</button>
+        <button class="admin-tab" data-tab="desafios">Desafios</button>
+        <button class="admin-tab" data-tab="popup">Pop-up</button>
+        <button class="admin-tab" data-tab="jogo">Jogo</button>
+      </div>
+
+      <div class="admin-panel active" data-panel="geral">
+        <div class="admin-grid two">
+          <label>Nome exibido<input data-setting="brandName" /></label>
+          <label>Texto do rodapé<input data-setting="footerTagline" /></label>
+          <label>Cor principal<input data-setting="primaryColor" type="color" /></label>
+          <label>Cor de destaque<input data-setting="accentColor" type="color" /></label>
+          <label class="span-2">Título da página<input data-setting="heroTitle" /></label>
+          <label class="span-2">Texto principal<textarea data-setting="heroText"></textarea></label>
+          <label>Frase de topo<input data-setting="heroEyebrow" /></label>
+          <label>Texto do cartão inicial<input data-setting="heroChallengeSub" /></label>
+        </div>
+        <div class="upload-row">
+          <div>
+            <strong>Logo da pizzaria</strong>
+            <p>Você pode carregar a logo oficial aqui. Ela fica salva no navegador deste dispositivo.</p>
+          </div>
+          <label class="btn btn-secondary file-btn">Escolher logo<input id="logoUpload" type="file" accept="image/*" hidden /></label>
+        </div>
+      </div>
+
+      <div class="admin-panel" data-panel="tutorial">
+        <div class="admin-grid two">
+          <label>Título do tutorial<input data-setting="tutorialTitle" /></label>
+          <label>Introdução<textarea data-setting="tutorialIntro"></textarea></label>
+        </div>
+        <div class="editor-list" id="tutorialEditor"></div>
+        <button class="btn btn-secondary" id="addTutorial">+ Adicionar passo</button>
+      </div>
+
+      <div class="admin-panel" data-panel="desafios">
+        <div class="admin-grid two">
+          <label>Título da seção<input data-setting="challengeTitle" /></label>
+          <label>Introdução<textarea data-setting="challengeIntro"></textarea></label>
+        </div>
+        <div class="editor-list" id="challengeEditor"></div>
+        <button class="btn btn-secondary" id="addChallenge">+ Adicionar desafio</button>
+      </div>
+
+      <div class="admin-panel" data-panel="popup">
+        <div class="toggle-row">
+          <div><strong>Mostrar pop-up ao abrir o site</strong><p>O pop-up aparece uma vez por sessão do navegador.</p></div>
+          <label class="switch"><input data-setting="popupEnabled" type="checkbox" /><span></span></label>
+        </div>
+        <div class="admin-grid two">
+          <label>Etiqueta<input data-setting="popupKicker" /></label>
+          <label>Título<input data-setting="popupTitle" /></label>
+          <label class="span-2">Mensagem<textarea data-setting="popupBody"></textarea></label>
+          <label>Texto do botão<input data-setting="popupButton" /></label>
+        </div>
+      </div>
+
+      <div class="admin-panel" data-panel="jogo">
+        <div class="admin-grid two">
+          <label>Título da área<input data-setting="gameSectionTitle" /></label>
+          <label>Texto da área<textarea data-setting="gameSectionIntro"></textarea></label>
+          <label class="span-2">URL do jogo (https://...)<input data-setting="gameUrl" placeholder="https://seu-jogo.exemplo.com" /></label>
+          <label class="span-2">Título quando não houver jogo<input data-setting="gameEmptyTitle" /></label>
+        </div>
+        <div class="tip-box">💡 Para usar um jogo externo, informe uma URL que permita incorporação em iframe. Se o jogo for um projeto local, hospede-o e use a URL publicada.</div>
+      </div>
+
+      <div class="admin-actions">
+        <div class="save-state" id="saveState">Alterações locais</div>
+        <button class="btn btn-secondary" id="resetDefaults">Restaurar padrão</button>
+        <button class="btn btn-primary" id="saveSettings">Salvar alterações</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
